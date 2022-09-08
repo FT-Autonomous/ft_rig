@@ -20,7 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ft_rig = ft_rig.ft_rig:main'
+            'ft_rig_node = ft_rig.ft_rig_node:main',
+            'command_motors = ft_rig.command_motors',
+            'print_pinion_distance = ft_rig.print_pinion_distance'
         ],
     },
 )
