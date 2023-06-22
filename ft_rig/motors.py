@@ -5,7 +5,13 @@ from .steering import get_pinion_distance
 def init():
     GPIO.setmode(GPIO.BOARD)
 
+def deinit():
+    GPIO.cleanup()
+
 class SteeringMotor:
+    SAFE_DUTY = 40
+    DEATH_AND_FIRE_DUTY = 80
+
     def __init__(self):
         self.in1_pin = 16 # brown
         self.in2_pin = 22 # green
@@ -13,11 +19,11 @@ class SteeringMotor:
         GPIO.setup(self.in1_pin, GPIO.OUT)
         GPIO.setup(self.in2_pin, GPIO.OUT)
         self.pwm_obj = GPIO.PWM(self.pwm_pin, 500)
-        self.pwm_obj.start(30)
+        self.pwm_obj.start(SteeringMotor.SAFE_DUTY)
 
         self.max_angle = math.radians(29)
-        self.max_pinion_displacement = 75.0
-        self.pinion_home = 68.0
+        self.max_pinion_displacement = 60.0
+        self.pinion_home = 80.0
 
     def compute_error(self, displacement):
         return get_pinion_distance() - (self.pinion_home + displacement)
@@ -52,7 +58,10 @@ class SteeringMotor:
         GPIO.output(self.in2_pin, GPIO.LOW)
 
 class ThrottleMotor:
-    def __init__(self, target_duty=90):
+    SAFE_DUTY = 20
+    DEATH_AND_FIRE_DUTY = 90
+
+    def __init__(self, target_duty=15):
         self.lpwm_pin = 18 # yellow
         self.rpwm_pin = 15 # orange
         self.len_pin = 32 # black

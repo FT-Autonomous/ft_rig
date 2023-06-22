@@ -24,7 +24,6 @@ def execute(commands):
         sleep(1)
         steering.stop()
         throttle.stop()
-        sleep(1)
 
 if len(sys.argv) == 1:
     execute(["up", "down", "left", "right"])

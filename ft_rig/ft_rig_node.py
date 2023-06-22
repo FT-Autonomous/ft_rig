@@ -23,7 +23,7 @@ class Rig(rclpy.node.Node):
         self.steering.max_angle = self.get_parameter("max_steering_angle").get_parameter_value().double_value
         self.steering.max_pinion_displacement = self.get_parameter("max_pinion_displacement").get_parameter_value().double_value
         self.target_pinion_displacement = max(-self.steering.max_angle, min(self.steering.max_angle, drive_stamped.drive.steering_angle)) / self.steering.max_angle * self.steering.max_pinion_displacement
-        self.throttle.target_duty = 90 if abs(drive_stamped.drive.speed) > 0 else 0
+        self.throttle.target_duty = ThrottleMotor.SAFE_DUTY if abs(drive_stamped.drive.speed) > 0 else 0
         if drive_stamped.drive.speed > 0:
             self.direction = "forwards"
         elif drive_stamped.drive.speed < 0:
