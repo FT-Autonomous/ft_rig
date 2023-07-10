@@ -46,22 +46,22 @@ class SteeringMotor:
                 self.left()
 
     def right(self):
-        GPIO.output(self.in1_pin, GPIO.LOW)
-        GPIO.output(self.in2_pin, GPIO.HIGH)
+        GPIO.output(self.in1_pin, GPIO.HIGH)
+        GPIO.output(self.in2_pin, GPIO.LOW)
 
     def stop(self):
         GPIO.output(self.in1_pin, GPIO.LOW)
         GPIO.output(self.in2_pin, GPIO.LOW)
 
     def left(self):
-        GPIO.output(self.in1_pin, GPIO.HIGH)
-        GPIO.output(self.in2_pin, GPIO.LOW)
+        GPIO.output(self.in1_pin, GPIO.LOW)
+        GPIO.output(self.in2_pin, GPIO.HIGH)
 
 class ThrottleMotor:
     SAFE_DUTY = 20
     DEATH_AND_FIRE_DUTY = 90
 
-    def __init__(self, target_duty=15):
+    def __init__(self, target_duty=10):
         self.lpwm_pin = 18 # yellow
         self.rpwm_pin = 15 # orange
         self.len_pin = 32 # black
