@@ -18,11 +18,11 @@ class SteeringMotor:
         self.pwm_pin = 13 # red
         GPIO.setup(self.in1_pin, GPIO.OUT)
         GPIO.setup(self.in2_pin, GPIO.OUT)
-        self.pwm_obj = GPIO.PWM(self.pwm_pin, 500)
+        self.pwm_obj = GPIO.PWM(self.pwm_pin, 50)
         self.pwm_obj.start(SteeringMotor.SAFE_DUTY)
 
         self.max_angle = math.radians(29)
-        self.max_pinion_displacement = 60.0
+        self.max_pinion_displacement = 45.0
         self.pinion_home = 80.0
 
     def compute_error(self, displacement):
@@ -57,8 +57,11 @@ class SteeringMotor:
         GPIO.output(self.in1_pin, GPIO.LOW)
         GPIO.output(self.in2_pin, GPIO.HIGH)
 
+    def cleanup(self):
+        self.pwm_obj.stop()
+
 class ThrottleMotor:
-    SAFE_DUTY = 20
+    SAFE_DUTY = 10
     DEATH_AND_FIRE_DUTY = 90
 
     def __init__(self, target_duty=10):
@@ -70,8 +73,6 @@ class ThrottleMotor:
         # Set up GPIO output pins
         GPIO.setup(self.len_pin, GPIO.OUT)
         GPIO.setup(self.ren_pin, GPIO.OUT)
-        GPIO.output(self.len_pin, GPIO.HIGH)
-        GPIO.output(self.ren_pin, GPIO.HIGH)
 
         # Create PWM clients
         self.lpwm_obj = GPIO.PWM(self.lpwm_pin, 500)
@@ -83,14 +84,24 @@ class ThrottleMotor:
         self.target_duty = target_duty
 
     def stop(self):
+        GPIO.output(self.len_pin, GPIO.LOW)
+        GPIO.output(self.ren_pin, GPIO.LOW)
         self.lpwm_obj.ChangeDutyCycle(0)
         self.rpwm_obj.ChangeDutyCycle(0)
 
     def forwards(self):
+        GPIO.output(self.len_pin, GPIO.HIGH)
+        GPIO.output(self.ren_pin, GPIO.HIGH)
         self.lpwm_obj.ChangeDutyCycle(0)
         self.rpwm_obj.ChangeDutyCycle(self.target_duty)
 
     # Cursed method, wont exist for DDT
     def backwards(self):
+        GPIO.output(self.len_pin, GPIO.HIGH)
+        GPIO.output(self.ren_pin, GPIO.HIGH)
         self.rpwm_obj.ChangeDutyCycle(0)
         self.lpwm_obj.ChangeDutyCycle(self.target_duty)
+
+    def cleanup(self):
+        self.rpwm_obj.stop()
+        self.lpwm_obj.stop()

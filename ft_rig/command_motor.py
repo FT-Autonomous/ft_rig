@@ -36,3 +36,6 @@ elif sys.argv[1] == "interactive":
             print("unknown command given !!!")
 else:
     execute(sys.argv[1:])
+
+steering.cleanup()
+throttle.cleanup()
